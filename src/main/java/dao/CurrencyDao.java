@@ -1,28 +1,41 @@
 package dao;
 
+import datasource.MariaDbConnection;
 import entity.Currency;
-import datasource.DatabaseConnection;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class CurrencyDao {
+    public List<Currency> getAllCurrencies() throws SQLException {
+        List<Currency> currencies = new ArrayList<>();
+        String sql = "SELECT abbreviation, name, conversion_rate FROM currencies";
 
-    public double getExchangeRate(String currencyCode) {
-        String query = "SELECT rate FROM currencies WHERE code = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, currencyCode);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getDouble("rate");
+        try (Connection conn = MariaDbConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                currencies.add(new Currency(
+                        rs.getString("abbreviation"),
+                        rs.getString("name"),
+                        rs.getDouble("conversion_rate")
+                ));
             }
-        } catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
-            return -1; // Indicate an error
         }
-        return 0; // Default value if not found
+        return currencies;
+    }
+
+    public double getConversionRate(String abbreviation) throws SQLException {
+        String sql = "SELECT conversion_rate FROM currencies WHERE abbreviation = ?";
+        try (Connection conn = MariaDbConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, abbreviation);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getDouble("conversion_rate");
+                else throw new SQLException("Currency not found: " + abbreviation);
+            }
+        }
     }
 }

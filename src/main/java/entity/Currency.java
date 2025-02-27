@@ -1,52 +1,18 @@
 package entity;
 
 public class Currency {
-    private String code;
-    private String name;
-    private double exchangeRate;
+    private final String abbreviation;
+    private final String name;
+    private final double conversionRate;
 
-    // Constructors
-    public Currency() {
-    }
-
-    public Currency(String code, String name, double exchangeRate) {
-        this.code = code;
+    public Currency(String abbreviation, String name, double conversionRate) {
+        this.abbreviation = abbreviation;
         this.name = name;
-        this.exchangeRate = exchangeRate;
+        this.conversionRate = conversionRate;
     }
 
-    // Getter and Setter methods
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getExchangeRate() {
-        return exchangeRate;
-    }
-
-    public void setExchangeRate(double exchangeRate) {
-        this.exchangeRate = exchangeRate;
-    }
-
-    // toString method for debugging and logging purposes
-    @Override
-    public String toString() {
-        return "Currency{" +
-                "code='" + code + '\'' +
-                ", name='" + name + '\'' +
-                ", exchangeRate=" + exchangeRate +
-                '}';
-    }
+    // Getters
+    public String getAbbreviation() { return abbreviation; }
+    public String getName() { return name; }
+    public double getConversionRate() { return conversionRate; }
 }
